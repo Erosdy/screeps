@@ -57,6 +57,9 @@ export class CreepService {
 
   private init(): void {
     for (const creepName in Game.creeps) {
+      if (Memory.creeps == null) {
+        Memory.creeps = {};
+      }
       const memory = Memory.creeps[creepName];
       if (memory == null) {
         this.logService.warn(`Could not find memory for creep ${creepName}`);

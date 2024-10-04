@@ -4,5 +4,6 @@ export interface ITicket {
   id: string;
   spawnName: string;
   creepType: ETypeCreep;
+  emittedBy: string;
   reservedBy?: string;
 }

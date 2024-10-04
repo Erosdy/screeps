@@ -2,7 +2,8 @@ import {EService} from "./EService";
 import {LogService} from "../LogService";
 import {CreepService} from "../CreepService";
 import {TicketService} from "../TicketService";
-import {CreepAIFactory} from "../../CreepsIA/CreepAIFactory";
+import {CreepAIFactory} from "../CreepAIFactory";
+import {StructureAIFactory} from "../StructureAIFactory";
 
 export class BeanService {
 
@@ -13,6 +14,7 @@ export class BeanService {
     BeanService.addService(EService.CreepService, new CreepService());
     BeanService.addService(EService.TicketService, new TicketService());
     BeanService.addService(EService.CreepAIFactory, new CreepAIFactory());
+    BeanService.addService(EService.StructureAIFactory, new StructureAIFactory());
   }
 
   public static closeServices(): void {
