@@ -1,5 +1,6 @@
 import {AbstractService} from "../abstract.service";
 import {LogLevelEnum} from "./log.level.enum";
+import {ColorEnum} from "./color.enum";
 
 export class LogService extends AbstractService {
 
@@ -17,36 +18,36 @@ export class LogService extends AbstractService {
     Memory.logLevel = this.logLevel;
   }
 
-  public error(message: string): void {
+  public error(message: unknown): void {
     if (this.logLevel < LogLevelEnum.ERROR) {
       return;
     }
     const stack = this.getStack();
-    this.message("red", this.format(stack.service, stack.method, message));
+    this.message(ColorEnum.Red, this.format(stack.service, stack.method, message));
   }
 
-  public warn(message: string): void {
+  public warn(message: unknown): void {
     if (this.logLevel < LogLevelEnum.WARNING) {
       return;
     }
     const stack = this.getStack();
-    this.message("orange", this.format(stack.service, stack.method, message));
+    this.message(ColorEnum.Orange, this.format(stack.service, stack.method, message));
   }
 
-  public info(message: string): void {
+  public info(message: unknown): void {
     if (this.logLevel < LogLevelEnum.INFO) {
       return;
     }
     const stack = this.getStack();
-    this.message("yellow", this.format(stack.service, stack.method, message));
+    this.message(ColorEnum.Yellow, this.format(stack.service, stack.method, message));
   }
 
-  public debug(message: string): void {
+  public debug(message: unknown): void {
     if (this.logLevel < LogLevelEnum.DEBUG) {
       return;
     }
     const stack = this.getStack();
-    this.message("cyan", this.format(stack.service, stack.method, message));
+    this.message(ColorEnum.Cyan, this.format(stack.service, stack.method, message));
   }
 
   private getStack(): { method: string, service: string } {
@@ -57,11 +58,12 @@ export class LogService extends AbstractService {
     return {method: parent_method, service: service_name};
   }
 
-  private message(color: string, message: string): void {
+  private message(color: ColorEnum, message: string): void {
     console.log(`<span style='color:${color}'>${message}</span>`)
   }
 
-  private format(service: string, method: string, message: string): string {
-    return `${Game.time}\t-\t${service}\t-\t${method}\t-\t${message}`;
+  private format(service: string, method: string, message: unknown): string {
+    const to_display = typeof message === "string" ? message : JSON.stringify(message);
+    return `${Game.time}\t-\t${service}\t-\t${method}\t-\t${to_display}`;
   }
 }
