@@ -1,5 +1,5 @@
-import {EService} from "../../enums/EService";
-import {AbstractService} from "../AbstractService";
+import {ServiceEnum} from "./service.enum";
+import {AbstractService} from "../abstract.service";
 import {declarationServices} from "./declaration.service";
 
 /**
@@ -9,15 +9,20 @@ import {declarationServices} from "./declaration.service";
 export class BeanService {
 
   private static hasBeenInstanciate: boolean = false;
-  private static services: Map<EService, AbstractService> = new Map();
+  private static services: Map<ServiceEnum, AbstractService> = new Map();
 
   /**
    * <strong>A appeler au tout début de la boucle</strong> <br>
    * Initialise tous les services présent dans declaration.service.
    */
   public static init(): void {
-    this.instanciateServices();
-    this.initServices();
+    for (const entry of declarationServices) {
+      this.addService(entry.name, entry.service);
+    }
+    for (const service of this.services.values()) {
+      service.init();
+    }
+    this.hasBeenInstanciate = true;
   }
 
   /**
@@ -25,9 +30,9 @@ export class BeanService {
    * Permet de récupérer le service correspondant au type donné
    * @param type
    */
-  public static getService<T extends AbstractService>(type: EService): T {
+  public static getService<T extends AbstractService>(type: ServiceEnum): T {
     if (!this.hasBeenInstanciate) {
-      throw new Error("BeanService should be initialise before getting a service");
+      throw new Error("bean.service should be initialise before getting a service");
     }
     const result = this.services.get(type);
     if (!result) {
@@ -42,7 +47,7 @@ export class BeanService {
    */
   public static closeServices(): void {
     if (!this.hasBeenInstanciate) {
-      throw new Error("BeanService should be initialise before closing its services");
+      throw new Error("bean.service should be initialise before closing its services");
     }
     for (const service of this.services.values()) {
       service.close();
@@ -50,23 +55,7 @@ export class BeanService {
     this.hasBeenInstanciate = false;
   }
 
-  private static instanciateServices(): void {
-    for (const entry of declarationServices) {
-      this.addService(entry.name, entry.service);
-    }
-    this.hasBeenInstanciate = true;
-  }
-
-  private static initServices(): void {
-    if (!this.hasBeenInstanciate) {
-      throw new Error("BeanService should be instanciate before initialising its services");
-    }
-    for (const service of this.services.values()) {
-      service.init();
-    }
-  }
-
-  private static addService(name: EService, service: AbstractService) {
+  private static addService(name: ServiceEnum, service: AbstractService) {
     this.services.set(name, service);
   }
 
