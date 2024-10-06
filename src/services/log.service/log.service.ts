@@ -8,14 +8,34 @@ export class LogService extends AbstractService {
   private logLevel: LogLevelEnum = LogService.DEFAULT_LOG_LEVEL;
 
   public init() {
-    if (Memory.logLevel == null) {
-      Memory.logLevel = LogService.DEFAULT_LOG_LEVEL;
+    if (Memory.config == null) {
+      Memory.config = {} as any;
     }
-    this.logLevel = Memory.logLevel;
+    if (Memory.config.logLevel == null) {
+      Memory.config.logLevel = LogService.DEFAULT_LOG_LEVEL;
+    }
+    this.logLevel = Memory.config.logLevel;
   }
 
   public close() {
-    Memory.logLevel = this.logLevel;
+    Memory.config.logLevel = this.logLevel;
+  }
+
+  public log(message: unknown, level: LogLevelEnum) {
+    switch (level) {
+      case LogLevelEnum.ERROR:
+        this.error(message);
+        break;
+      case LogLevelEnum.WARNING:
+        this.warn(message);
+        break;
+      case LogLevelEnum.INFO:
+        this.info(message);
+        break;
+      case LogLevelEnum.DEBUG:
+        this.debug(message);
+        break;
+    }
   }
 
   public error(message: unknown): void {
