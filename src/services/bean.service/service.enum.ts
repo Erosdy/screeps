@@ -1,4 +1,5 @@
 export enum ServiceEnum {
+  CONFIG_SERVICE = "ConfigService",
   LOG_SERVICE = "LogService",
-  ROOM_SERVICE = "ROOM_SERVICE",
+  ROOM_SERVICE = "RoomService"
 }

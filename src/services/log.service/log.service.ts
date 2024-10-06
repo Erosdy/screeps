@@ -1,24 +1,21 @@
 import {AbstractService} from "../abstract.service";
 import {LogLevelEnum} from "./log.level.enum";
 import {ColorEnum} from "./color.enum";
+import {ConfigService} from "../config.service/config.service";
+import {BeanService} from "../bean.service/bean.service";
+import {ServiceEnum} from "../bean.service/service.enum";
 
 export class LogService extends AbstractService {
 
-  private static readonly DEFAULT_LOG_LEVEL: LogLevelEnum = LogLevelEnum.INFO;
-  private logLevel: LogLevelEnum = LogService.DEFAULT_LOG_LEVEL;
+  public static readonly DEFAULT_LOG_LEVEL: LogLevelEnum = LogLevelEnum.INFO;
+  private configService?: ConfigService;
 
   public init() {
-    if (Memory.config == null) {
-      Memory.config = {} as any;
-    }
-    if (Memory.config.logLevel == null) {
-      Memory.config.logLevel = LogService.DEFAULT_LOG_LEVEL;
-    }
-    this.logLevel = Memory.config.logLevel;
+    this.configService = BeanService.getService<ConfigService>(ServiceEnum.CONFIG_SERVICE);
   }
 
-  public close() {
-    Memory.config.logLevel = this.logLevel;
+  public getLogLevel(): LogLevelEnum {
+    return this.getConfigService().getLogLevel();
   }
 
   public log(message: unknown, level: LogLevelEnum) {
@@ -39,7 +36,7 @@ export class LogService extends AbstractService {
   }
 
   public error(message: unknown): void {
-    if (this.logLevel < LogLevelEnum.ERROR) {
+    if (this.getLogLevel() < LogLevelEnum.ERROR) {
       return;
     }
     const stack = this.getStack();
@@ -47,7 +44,7 @@ export class LogService extends AbstractService {
   }
 
   public warn(message: unknown): void {
-    if (this.logLevel < LogLevelEnum.WARNING) {
+    if (this.getLogLevel() < LogLevelEnum.WARNING) {
       return;
     }
     const stack = this.getStack();
@@ -55,7 +52,7 @@ export class LogService extends AbstractService {
   }
 
   public info(message: unknown): void {
-    if (this.logLevel < LogLevelEnum.INFO) {
+    if (this.getLogLevel() < LogLevelEnum.INFO) {
       return;
     }
     const stack = this.getStack();
@@ -63,11 +60,18 @@ export class LogService extends AbstractService {
   }
 
   public debug(message: unknown): void {
-    if (this.logLevel < LogLevelEnum.DEBUG) {
+    if (this.getLogLevel() < LogLevelEnum.DEBUG) {
       return;
     }
     const stack = this.getStack();
     this.message(ColorEnum.Cyan, this.format(stack.service, stack.method, message));
+  }
+
+  private getConfigService(): ConfigService {
+    if (this.configService == null) {
+      throw new Error("Could not get configuration service: config service has not been initialized");
+    }
+    return this.configService;
   }
 
   private getStack(): { method: string, service: string } {

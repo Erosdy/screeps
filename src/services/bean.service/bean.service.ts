@@ -31,9 +31,6 @@ export class BeanService {
    * @param type
    */
   public static getService<T extends AbstractService>(type: ServiceEnum): T {
-    if (!this.hasBeenInstanciate) {
-      throw new Error("bean.service should be initialise before getting a service");
-    }
     const result = this.services.get(type);
     if (!result) {
       throw new Error(`Service ${type} not found`);

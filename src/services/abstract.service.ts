@@ -1,7 +1,6 @@
 export abstract class AbstractService {
 
   constructor() {
-    this.init();
   }
 
 
