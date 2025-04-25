@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a54cde4-bf4f-4d66-ba51-3b8a62ea3100" name="Changes" comment="restart project">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.ts" afterDir="false" />
-    </list>
+    <list default="true" id="5a54cde4-bf4f-4d66-ba51-3b8a62ea3100" name="Changes" comment="Retrait d'un sample" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -144,7 +141,7 @@
       <workItem from="1745614174133" duration="304000" />
       <workItem from="1745614488496" duration="67000" />
       <workItem from="1745614567826" duration="130000" />
-      <workItem from="1745614706811" duration="385000" />
+      <workItem from="1745614706811" duration="694000" />
     </task>
     <task id="LOCAL-00001" summary="restart project">
       <option name="closed" value="true" />
@@ -170,7 +167,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745614794814</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Ajout du document résumant le lot 1">
+      <option name="closed" value="true" />
+      <created>1745615376329</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1745615376329</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Retrait d'un sample">
+      <option name="closed" value="true" />
+      <created>1745615408119</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1745615408119</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,6 +191,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="restart project" />
-    <option name="LAST_COMMIT_MESSAGE" value="restart project" />
+    <MESSAGE value="Ajout du document résumant le lot 1" />
+    <MESSAGE value="Retrait d'un sample" />
+    <option name="LAST_COMMIT_MESSAGE" value="Retrait d'un sample" />
   </component>
 </project>
