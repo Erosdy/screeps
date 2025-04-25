@@ -5,5 +5,5 @@ declare global {
 }
 
 export const loop = ErrorMapper.wrapLoop(() => {
-    console.log("test")
+    
 });
