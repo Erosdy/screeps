@@ -85,13 +85,115 @@ place :
     * **Décorateur `@Logging` :** Pour loguer automatiquement les entrées/sorties des méthodes décorées (sans stack
       trace incluse).
     * **LogService :** Un module séparé (`log.debug()`, `log.info()`, etc.) pour les logs manuels et contextuels dans le
-      code. Il acceptera l'objet source (`Loggable`) comme argument.
+      code. Il acceptera l'objet source (`LoggableInterface`) comme argument.
     * **Format standardisé :** Messages incluant `[Tick] [Level] [SourceId]` et formatage cohérent pour les
       paramètres/retours/erreurs.
-    * **Interface `Loggable` :** Interface TypeScript définissant la structure minimale (au moins une propriété
+    * **Interface `LoggableInterface` :** Interface TypeScript définissant la structure minimale (au moins une propriété
       `id: string`) pour un objet pouvant servir de source de contexte pour les logs.
 4. **Memory Repositories :** Des modules dédiés (au moins un `CreepMemoryRepository` et un `SpawnMemoryRepository`) pour
    gérer de manière centralisée et abstraite la lecture/écriture des données persistantes dans l'objet global `Memory`.
    Cela améliore la propreté et la testabilité du code en isolant la logique d'accès mémoire.
 5. **Modules Utilitaires :** Des fonctions ou modules statiques pour des tâches transversales (ex:
    `Finder.findSource(room)` pour trouver des sources, `Finder.findSpawn(room)` pour trouver un spawn, etc.).
+
+## Décisions Architecturales Clés - Système de Logging
+
+Lors du développement de l'infrastructure de logging pour le Lot 1, une décision a été prise pour définir une
+répartition claire des responsabilités concernant le formatage et le filtrage des messages, s'écartant légèrement de la
+spécification initiale qui impliquait une centralisation plus poussée du formatage dans le `LogService`.
+
+Cette approche est guidée par le principe d'une meilleure séparation des préoccupations et vise à définir un rôle précis
+et limité pour chaque composant clé du système de logging.
+
+**Rôle du `LogService` (Après Décision)**
+
+Le module `LogService` (ex: `src/log/log.service.ts`) a un rôle bien défini, combinant des responsabilités de base pour
+l'affichage des logs dans l'environnement Screeps :
+
+1. **Filtration par Niveau (`_canWrite`)** : Déterminer si un message doit être affiché en comparant son niveau (
+   `ELogLevel`) avec le niveau de log global configuré (lu via `configurationRepository.getLogLevel()`). Un message
+   n'est traité que si son niveau est inférieur ou égal au niveau global configuré.
+2. **Formatage Standard (`_formatLog`)** : Appliquer un formatage standard *minimal* à toutes les entrées de log reçues.
+   Ce formatage inclut l'ajout automatique du **niveau de log**, du **tick actuel (`Game.time`)**, de l'**ID de la
+   source (`ILoggable`)**, et la **substitution des arguments (`{}`)** présents dans le message fourni via
+   `_buildDynamicMessage`.
+3. **Colorisation (`_getColorFromLogLevel`)** : Associer une couleur (`EColor`) au message formaté en fonction de son
+   niveau de log.
+4. **Écriture en Console (`_writeLog`)** : Afficher la chaîne de caractères finale (préfixée et colorisée) dans la
+   console du jeu.
+
+Le `LogService` **n'est pas responsable** de :
+
+* Choisir dynamiquement le format *global* du message (`SINGLE_LINE` vs `ENTRY_EXIT`, etc.) en fonction d'une
+  configuration lue par *lui-même*. Il applique un format standard unique (`[Niveau] Tick SourceId MessageArgs`) aux
+  messages qu'il reçoit via `_formatLog`.
+
+Les méthodes publiques du `LogService` (`debug`, `info`, `warn`, `error`) s'attendent à recevoir :
+
+* Un contexte optionnel (`ILoggable | undefined`) pour identifier la source du log et permettre l'ajout de son ID dans
+  le préfixe standard.
+* Une **chaîne de caractères `message`** qui représente le corps *principal* du message de log.
+* Des **arguments supplémentaires (`...args`)** qui seront utilisés par le `LogService` lui-même pour la substitution (
+  `"{}"`) dans le corps du message fourni.
+
+**Rôle du Décorateur `@Logging` et des Autres Appelants**
+
+Dans cette architecture, les composants qui *appellent* le `LogService` prennent en charge la responsabilité de
+construire le **corps principal** du message (`message` argument) et de gérer le format global souhaité (`SINGLE_LINE`/
+`ENTRY_EXIT`), ainsi que le niveau de sévérité de leur propre log :
+
+1. **Définition du Niveau de Log** : L'appelant (notamment le décorateur `@Logging`) définit le niveau de log du message
+   qu'il va générer. Pour le décorateur `@Logging` dans le Lot 1, ce niveau est défini **via un paramètre passé lors de
+   son application** (ex: `@Logging(ELogLevel.DEBUG)`). Ce paramètre indique la sévérité *intrinsèque* des informations
+   loguées par cette méthode décorée.
+2. **Lecture de la Configuration du Format Global** : Des composants comme le décorateur `@Logging` liront la
+   configuration `Memory.logFormat` via `configurationRepository.getLogFormat()` pour connaître le format d'affichage
+   global souhaité (`SINGLE_LINE` ou `ENTRY_EXIT`).
+3. **Collecte des Informations de Contexte Spécifiques** : Ils collecteront toutes les données spécifiques nécessaires
+   au formatage selon le `ELogFormat` choisi (nom de la méthode décorée, valeur de retour, erreur levée, arguments
+   spécifiques à afficher pour le format `ENTRY_EXIT`, etc.).
+4. **Construction du Corps du Message (`message` argument)** : Sur la base du format global configuré (`SINGLE_LINE` ou
+   `ENTRY_EXIT`) et des informations collectées, ils construiront la **chaîne de caractères qui formera le corps
+   principal** passé à la méthode publique du `LogService`. Par exemple, pour `ENTRY_EXIT`, le décorateur pourrait
+   construire une chaîne comme `"Entering method {}: {}"` (où les `{}` seraient substitués par le service avec le nom de
+   la méthode et ses arguments).
+5. **Appel au `LogService`** : Ils appelleront la méthode publique appropriée du `LogService` (`log.debug`, `log.info`,
+   etc.), en lui passant le contexte `ILoggable`, la **chaîne de caractères du corps du message construite par
+   l'appelant**, et les arguments supplémentaires nécessaires pour la substitution (`"{}"`) par le service dans ce
+   corps.
+
+**Gestion du Niveau de Log pour les Méthodes Décorées (Détails du Lot 1)**
+
+Pour le Lot 1, la gestion de la verbosité des logs spécifiques aux méthodes décorées est gérée de la manière suivante :
+
+* Le décorateur `@Logging` accepte un paramètre obligatoire `level: ELogLevel`. Ce paramètre définit le niveau de log *
+  *auquel les messages générés par cette décoration seront envoyés** au `LogService`.
+* Le décorateur générera son message et appellera la méthode publique correspondante du `LogService` (ex: `log.debug` si
+  `level` est `ELogLevel.DEBUG`).
+* Le filtrage final et effectif de ce log sera ensuite réalisé par le `LogService` en comparant ce niveau (`level`) avec
+  le niveau de log *global* configuré dans `Memory.logLevel` (`configurationRepository.getLogLevel()`).
+
+Cette approche privilégie la simplicité initiale en définissant le niveau de log de la décoration de manière statique
+dans le code. Une gestion plus dynamique du niveau de log des décorateurs via une configuration en mémoire est
+identifiée comme une amélioration possible pour les lots futurs.
+
+**Justification de ce Choix**
+
+Cette architecture présente les avantages suivants :
+
+* **Clarté des Responsabilités** : Le `LogService` gère le filtrage final et l'ajout des informations système standard (
+  niveau, tick, ID, substitution d'arguments générique). L'appelant (décorateur) gère la logique de *haut niveau* liée
+  au format global (`ENTRY_EXIT` vs `SINGLE_LINE`) pour construire le corps principal du message, et définit le niveau
+  de sévérité de ce message.
+* **Réutilisation du Code** : La logique de substitution des arguments (`_buildDynamicMessage`) est centralisée dans le
+  service.
+* **Simplicité du Service** : Le code du `LogService` est plus simple à maintenir et à tester pour ses fonctions de
+  base.
+* **Simplicité Initiale du Décorateur** : Pour le Lot 1, la gestion statique du niveau de log du décorateur simplifie sa
+  première implémentation.
+
+L'inconvénient est que la logique de formatage du corps du message (en fonction de `ELogFormat`) est déportée dans le
+décorateur, et la gestion de la verbosité des décorateurs n'est pas dynamiquement configurable en Lot 1 (nécessite un
+redéploiement pour changer le paramètre `@Logging(level)`).
+
+---
