@@ -1,5 +1,6 @@
 export enum TaskStatusEnum {
-    SUCCESS,
-    RUNNING,
-    FAILURE
+    FINISH = "finish",
+    SUCCESS = "success",
+    RUNNING = "running",
+    FAILURE = "failure",
 }
