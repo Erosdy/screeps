@@ -20,6 +20,9 @@ export class InputRepositoryImpl {
 
 	private getCache(): InputInterface[] {
 		if (this._cache == null) {
+			if (Memory.inputs == null) {
+				Memory.inputs = [];
+			}
 			this._cache = Memory.inputs ?? [];
 		}
 		return this._cache;
