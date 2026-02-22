@@ -1,7 +1,7 @@
 import {RepositoryInterface} from "./repository.interface";
 import {EntiteInterface} from "./entite.interface";
 
-export abstract class RepositoriyAbstract<E extends EntiteInterface> implements RepositoryInterface<E> {
+export abstract class RepositoryAbstract<E extends EntiteInterface> implements RepositoryInterface<E> {
 	public delete(id: string): void {
 		throw new Error("Should be implemented by Repository decorator");
 	}
