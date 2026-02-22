@@ -1,11 +1,11 @@
-import {BehaviourNode} from "./behaviour-node.interface";
+import {BehaviourNodeInterface} from "./behaviour-node.interface";
 import {TaskStatusEnum} from "./task-status.enum";
 
-export class Selector implements BehaviourNode {
+export class Selector implements BehaviourNodeInterface {
 
-	private readonly nodes: BehaviourNode[];
+	private readonly nodes: BehaviourNodeInterface[];
 
-	constructor(nodes: BehaviourNode[]) {
+	constructor(nodes: BehaviourNodeInterface[]) {
 		this.nodes = nodes;
 	}
 

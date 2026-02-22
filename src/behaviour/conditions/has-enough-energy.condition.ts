@@ -1,7 +1,7 @@
-import {BehaviourNode} from "../behaviour-node.interface";
+import {BehaviourNodeInterface} from "../behaviour-node.interface";
 import {TaskStatusEnum} from "../task-status.enum";
 
-export class HasEnoughEnergyCondition implements BehaviourNode {
+export class HasEnoughEnergyCondition implements BehaviourNodeInterface {
 
 	private readonly THRESHOLD_DEFAULT_VALUE: number = 50;
 	private readonly threshold: number;
