@@ -1,15 +1,13 @@
 import {InputInterface} from "./input.interface";
+import {Singleton} from "../singleton/singleton.decorator";
+import {SingletonClass} from "../singleton/singleton.type";
 
-export class InputRepository {
-	private static _instance: InputRepository;
+// Même si c'est un repository, celui-ci, qui ne gère que les inputs utilisateur
+// n'est pas géré de la même manière. On se contente donc d'implémenter les quelques méthodes
+// nécéssaires.
+@Singleton
+export class InputRepositoryImpl {
 	private _cache?: InputInterface[];
-
-	static getInstance(): InputRepository {
-		if (this._instance == null) {
-			this._instance = new InputRepository();
-		}
-		return this._instance;
-	}
 
 	public getInputs(): InputInterface[] {
 		return this.getCache();
@@ -27,3 +25,5 @@ export class InputRepository {
 		return this._cache;
 	}
 }
+
+export const InputRepository = InputRepositoryImpl as unknown as SingletonClass<InputRepositoryImpl>;

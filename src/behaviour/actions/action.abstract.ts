@@ -1,21 +1,21 @@
-import {BehaviourNode} from "../behaviour-node.interface";
+import {BehaviourNodeInterface} from "../behaviour-node.interface";
 import {TaskStatusEnum} from "../task-status.enum";
 
-export abstract class AbstractAction implements BehaviourNode {
+export abstract class AbstractAction implements BehaviourNodeInterface {
 
-    protected isLastNode: boolean;
+	protected isLastNode: boolean;
 
-    constructor(args?: { isLastNode?: boolean }) {
-        this.isLastNode = args?.isLastNode ?? false;
-    }
+	constructor(args?: { isLastNode?: boolean }) {
+		this.isLastNode = args?.isLastNode ?? false;
+	}
 
-    public abstract tick(creep: Creep): TaskStatusEnum;
+	public abstract tick(creep: Creep): TaskStatusEnum;
 
-    protected returnSuccess(): TaskStatusEnum {
-        if (this.isLastNode) {
-            return TaskStatusEnum.FINISH;
-        }
-        return TaskStatusEnum.SUCCESS;
-    }
+	protected returnSuccess(): TaskStatusEnum {
+		if (this.isLastNode) {
+			return TaskStatusEnum.FINISH;
+		}
+		return TaskStatusEnum.SUCCESS;
+	}
 
 }

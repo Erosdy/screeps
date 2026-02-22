@@ -1,27 +1,19 @@
-import {InputRepository} from "../input/input.repository";
 import {NeedRepository} from "./need.repository";
-import {InputInterface} from "../input/input.interface";
 import {TicketInterface} from "../ticket/ticket.interface";
+import {Singleton} from "../singleton/singleton.decorator";
+import {SingletonClass} from "../singleton/singleton.type";
+import {NeedInterface} from "./need.interface";
+import {InputRepository} from "../input/input.repository";
 
-export class NeedFactory {
-
-	private static _instance: NeedFactory;
-	private static index: number = 0;
-
-	static getInstance(): NeedFactory {
-		if (this._instance == null) {
-			this._instance = new NeedFactory();
-		}
-		return this._instance;
-	}
+@Singleton
+export class NeedFactoryImpl {
 
 	public generateNeed(ticket: TicketInterface): void {
+		const needRepository = NeedRepository.getInstance();
 		const need = {
-			id: this.generateId({type: ticket.type, targetId: ticket.targetId}),
 			type: ticket.type,
 			targetId: ticket.targetId,
-		}
-		const needRepository = NeedRepository.getInstance();
+		} as NeedInterface;
 		needRepository.save(need);
 	}
 
@@ -35,17 +27,12 @@ export class NeedFactory {
 		for (const input of inputs) {
 			const need = {
 				...input,
-				id: this.generateId(input)
-			};
+			} as NeedInterface;
 			needRepository.save(need);
 		}
 		inputRepository.deleteAll();
 	}
 
-	// TODO cette méthode devrait être effectué via le save du repository
-	private generateId(need: InputInterface) {
-		return `${need.type}$${Game.time}$${++NeedFactory.index}`;
-	}
-
-
 }
+
+export const NeedFactory = NeedFactoryImpl as unknown as SingletonClass<NeedFactoryImpl>;

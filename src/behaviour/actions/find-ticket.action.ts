@@ -1,8 +1,8 @@
-import {BehaviourNode} from "../behaviour-node.interface";
+import {BehaviourNodeInterface} from "../behaviour-node.interface";
 import {TaskStatusEnum} from "../task-status.enum";
 import {TicketRepository} from "../../ticket/ticket.repository";
 
-export class FindTicketAction implements BehaviourNode {
+export class FindTicketAction implements BehaviourNodeInterface {
 
 	public tick(creep: Creep): TaskStatusEnum {
 		const ticketRepository = TicketRepository.getInstance();
