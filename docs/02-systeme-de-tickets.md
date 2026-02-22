@@ -3,7 +3,7 @@
 > **Fichier :** `02-systeme-de-tickets.md`  
 > **Date :** Février 2025  
 > **Statut :** Mergée  
-> **PR :** *(à renseigner)*
+> **PR :** https://github.com/Erosdy/screeps/pull/3
 
 ---
 

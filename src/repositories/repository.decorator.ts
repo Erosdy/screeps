@@ -25,7 +25,7 @@ export function Repository<E extends EntiteInterface>(memoryKey: MemoryKeyEnum) 
 					if (Memory[memoryKey] == null) {
 						Memory[memoryKey] = {};
 					}
-					this._cache = new Map(Object.entries(Memory[memoryKey])) as Map<string, E>;
+					this._cache = new Map(Object.entries(Memory[memoryKey])) as unknown as Map<string, E>;
 				}
 				return this._cache;
 			}
