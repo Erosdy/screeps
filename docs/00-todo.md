@@ -29,3 +29,7 @@
 - **Système de migration de Memory** — versionner la Memory pour gérer les changements de structure incompatibles entre deux pushs sans perdre la progression en cours.
 
 - **Path caching** — sauvegarder le path calculé dans la Memory du creep pour éviter de recalculer le pathfinding à chaque tick. À adresser quand le CPU devient un facteur limitant mesuré en jeu.
+
+- **Dashboard colonie** *(après génération automatique des needs v1)* — mettre en place un système de logs/visualisation permettant de comprendre d'un coup d'œil l'état global de la colonie : tickets par statut et par type, action en cours par creep, énergie disponible. Medium à définir au moment de l'implémentation (console, `RoomVisual`, ou les deux). L'objectif est de détecter rapidement un creep bloqué ou un type de ticket qui s'accumule sans être consommé.
+
+- **`AbstractMoveTo` — portée configurable** — le range d'arrêt est actuellement fixe. Le rendre configurable par action pour couvrir les cas où la portée est supérieure à 1 (ex : `build`, `repair` à portée 3). Chaque action `MoveTo` descendante devrait pouvoir déclarer son `range` cible.
