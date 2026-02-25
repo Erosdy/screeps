@@ -1,10 +1,10 @@
 import {TicketInterface} from "./ticket.interface";
 import {Repository} from "../repositories/repository.decorator";
-import {MemoryKeyEnum} from "../repositories/memory-key.enum";
+import {MemoryKey} from "../repositories/memory-key.class";
 import {RepositoryClass} from "../repositories/repository.type";
 import {RepositoryAbstract} from "../repositories/repository.abstract";
 
-@Repository(MemoryKeyEnum.TICKETS)
+@Repository(MemoryKey.TICKETS)
 class TicketRepositoryImpl extends RepositoryAbstract<TicketInterface> {
 
 	public findUnassignedTickets(): TicketInterface[] {

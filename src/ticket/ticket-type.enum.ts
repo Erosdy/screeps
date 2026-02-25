@@ -2,5 +2,5 @@ export enum TicketTypeEnum {
 	REPAIR = "repair",
 	BUILD = "build",
 	UPGRADE = "upgrade",
-	HARVEST = "harvest"
+	FILL_CONTAINER = "fill-container"
 }

@@ -2,8 +2,9 @@ import {NeedRepository} from "./need.repository";
 import {TicketInterface} from "../ticket/ticket.interface";
 import {Singleton} from "../singleton/singleton.decorator";
 import {SingletonClass} from "../singleton/singleton.type";
-import {NeedInterface} from "./need.interface";
 import {InputRepository} from "../input/input.repository";
+import {DraftEntite} from "../repositories/draft-entite.type";
+import {NeedInterface} from "./need.interface";
 
 @Singleton
 export class NeedFactoryImpl {
@@ -13,9 +14,10 @@ export class NeedFactoryImpl {
 		const need = {
 			type: ticket.type,
 			targetId: ticket.targetId,
-		} as NeedInterface;
+		};
 		needRepository.save(need);
 	}
+
 
 	public generateNeedFromInputs() {
 		const inputRepository = InputRepository.getInstance();
@@ -27,7 +29,7 @@ export class NeedFactoryImpl {
 		for (const input of inputs) {
 			const need = {
 				...input,
-			} as NeedInterface;
+			} as DraftEntite<NeedInterface>;
 			needRepository.save(need);
 		}
 		inputRepository.deleteAll();

@@ -5,6 +5,7 @@ import {TicketPriorityEnum} from "./ticket-priority.enum";
 import {TicketRepository} from "./ticket.repository";
 import {Singleton} from "../singleton/singleton.decorator";
 import {SingletonClass} from "../singleton/singleton.type";
+import {DraftEntite} from "../repositories/draft-entite.type";
 
 @Singleton
 export class TicketFactoryImpl {
@@ -22,14 +23,18 @@ export class TicketFactoryImpl {
 			needRepository.delete(need.id);
 		}
 	}
-  
-	private fromNeed(need: NeedInterface): TicketInterface {
+
+	// TODO: Implémenter un fromNeed par type de need pour garantir la cohérence
+	// type/targetId à la compilation
+	// À traiter lors de l'introduction de la
+	// génération automatique de needs par les entités.
+	private fromNeed(need: NeedInterface): DraftEntite<TicketInterface> {
 		return {
 			type: need.type,
 			targetId: need.targetId,
 			priority: TicketPriorityEnum.DEFAULT,
 			assignTo: undefined
-		} as TicketInterface; // Cast obligatoire ici, on a pas d'ID, il sera ajouté au moment du save dans le repository
+		};
 	}
 }
 
