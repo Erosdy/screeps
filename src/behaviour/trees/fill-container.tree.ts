@@ -6,8 +6,7 @@ import {HarvestEnergyAction} from "../actions/harvest-energy.action";
 import {MoveToTargetAction} from "../actions/move-to/move-to-target.action";
 import {TransferEnergyToTargetAction} from "../actions/transfer-energy/transfer-energy-to-target.action";
 
-// TODO à renommer, il rempli un container, il harvest comme tous les autres mais en réalité son boulot est de remplir
-export const harvesterTree = new Selector([
+export const fillContainerTree = new Selector([
 	new Sequence([
 		new HasEnoughEnergyCondition({threshold: 50}),
 		new MoveToTargetAction(),

@@ -1,10 +1,10 @@
 import {RepositoryClass} from "../repositories/repository.type";
-import {MemoryKeyEnum} from "../repositories/memory-key.enum";
 import {Repository} from "../repositories/repository.decorator";
 import {NeedInterface} from "./need.interface";
 import {RepositoryAbstract} from "../repositories/repository.abstract";
+import {MemoryKey} from "../repositories/memory-key.class";
 
-@Repository(MemoryKeyEnum.NEEDS)
+@Repository(MemoryKey.NEEDS)
 class NeedRepositoryImpl extends RepositoryAbstract<NeedInterface> {
 }
 
